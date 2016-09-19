@@ -116,8 +116,7 @@ app_angular.controller('sessionController',['bootbox','Conexion','$scope','$loca
                 var rowid=elem[i].rowid
                 $http({
                   method: 'GET',
-                  url: 'http://demos.pedidosonline.co/Mobile/syncV2?usuario='+$scope.usuario+'&entidad=PEDIDO&codigo_empresa=' + $scope.codigoempresa + '&datos=' + JSON.stringify(elem[i]),
-                  timeout:4000
+                  url: 'http://demos.pedidosonline.co/Mobile/syncV2?usuario='+$scope.usuario+'&entidad=PEDIDO&codigo_empresa=' + $scope.codigoempresa + '&datos=' + JSON.stringify(elem[i])
                     }).then(
                     function success(data) { 
                         CRUD.Updatedynamic("update t_pedidos set estado_sincronizacion=1,sincronizado='true' where rowid="+data.data.rowid+"");
