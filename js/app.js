@@ -154,14 +154,28 @@ app_angular.controller('sessionController',['bootbox','Conexion','$scope','$loca
         $scope.pedido=[];
         $scope.errorAlerta.bandera=0;
         window.setTimeout(function(){
-            $scope.envioSubItem();
-            $scope.envioItem();
-            window.setTimeout(function(){
-                if ($scope.errorAlerta.bandera!=1) {
-                    $scope.envioPedido();      
+            
+            CRUD.selectAllinOne("select*from t_pedidos where estado_sincronizacion=0",function(elem)
+            {
+                debugger
+                if (elem.length>0) {
+                    $scope.envioSubItem();
+                    $scope.envioItem();
+                    window.setTimeout(function(){
+                        if ($scope.errorAlerta.bandera!=1) {
+                              $scope.envioPedido();          
+                            
+                        }
+                        
+                    },50000)      
+                }
+                else
+                {
+                    debugger
                 }
                 
-            },50000)
+            })
+
             
         },1000)
     }
@@ -364,11 +378,11 @@ app_angular.controller('sessionController',['bootbox','Conexion','$scope','$loca
 
     }
     //CRUD.Updatedynamic("delete from  s_planos_pedidos");
-    CRUD.Updatedynamic("update t_pedidos set estado_sincronizacion=0 where rowid="+9733+"");
+    //CRUD.Updatedynamic("update t_pedidos set estado_sincronizacion=1 where rowid="+9733+"");
     //$scope.build();
     $scope.sincronizar=function(){
         ProcesadoShow();
-        $scope.datosSubir();
+        $scope.datosSubir();    
         window.setTimeout(function(){
             //VACIAR TABLAS
              //ProcesadoHiden();
