@@ -74,15 +74,23 @@ app_angular.controller('sessionController',['bootbox','Conexion','$scope','$loca
         CRUD.selectAllinOne("select*from t_pedidos_detalle_detalle where estado=0",function(elem){
             for (var i =0;i<elem.length;i++) {
                 var rowid=elem[i].rowid
+                if ($scope.status.connextionstate==false) {
+                    $scope.errorAlerta.bandera=1;
+                    break;
+                }
                 $http({
                   method: 'GET',
                   url: 'http://demos.pedidosonline.co/Mobile/syncV2?usuario='+$scope.usuario+'&entidad=SUBITEM&codigo_empresa=' + $scope.codigoempresa + '&datos=' + JSON.stringify(elem[i]),
-                  timeout:3000
+                  timeout:2000
                     }).then(
-                    function success(data) { debugger;
+                    function success(data) {
                         CRUD.Updatedynamic("update t_pedidos_detalle_detalle set estado=1 where rowid="+data.data.rowid+"");
                     }, 
-                    function error(err) {Mensajes('Error al Subir SubItem','error','');$scope.errorAlerta.bandera=1;return 
+                    function error(err) {
+                        if ($scope.errorAlerta.bandera!=0) {
+                            Mensajes('Error al Subir SubItem','error','');    
+                        }
+                        $scope.errorAlerta.bandera=1;return 
                 });
             }
         })
@@ -93,15 +101,23 @@ app_angular.controller('sessionController',['bootbox','Conexion','$scope','$loca
         CRUD.selectAllinOne("select*from t_pedidos_detalle where estado=0",function(elem){
             for (var i =0;i<elem.length;i++) {
                 var rowid=elem[i].rowid
+                if ($scope.status.connextionstate==false) {
+                    $scope.errorAlerta.bandera=1;
+                    break;
+                }
                 $http({
                   method: 'GET',
                   url: 'http://demos.pedidosonline.co/Mobile/syncV2?usuario='+$scope.usuario+'&entidad=ITEM&codigo_empresa=' + $scope.codigoempresa + '&datos=' + JSON.stringify(elem[i]),
-                  timeout:3000
+                  timeout:2000
                     }).then(
-                    function success(data) { debugger; 
+                    function success(data) { 
                         CRUD.Updatedynamic("update t_pedidos_detalle set estado=1 where rowid="+data.data.rowid+"");
                     }, 
-                    function error(err) {Mensajes('Error al Subir Item','error','');$scope.errorAlerta.bandera=1;return 
+                    function error(err) {
+                        if ($scope.errorAlerta.bandera!=1) {
+                            Mensajes('Error al Subir Item','error','');
+                        }
+                        $scope.errorAlerta.bandera=1;return 
                 });
             }
         })
@@ -111,8 +127,11 @@ app_angular.controller('sessionController',['bootbox','Conexion','$scope','$loca
         $scope.usuario=$scope.sessiondate.nombre_usuario;
         $scope.codigoempresa=$scope.sessiondate.codigo_empresa;
         CRUD.selectAllinOne("select*from t_pedidos where estado_sincronizacion=0",function(elem){
-
             for (var i =0;i<elem.length;i++) {
+                if ($scope.status.connextionstate==false) {
+                    $scope.errorAlerta.bandera=1;
+                    break;
+                }
                 var rowid=elem[i].rowid
                 $http({
                   method: 'GET',
@@ -142,9 +161,9 @@ app_angular.controller('sessionController',['bootbox','Conexion','$scope','$loca
                     $scope.envioPedido();      
                 }
                 
-            },6000)
+            },9000)
             
-        },3000)
+        },1000)
     }
     $scope.Request=function(url){
         $scope.errorAlerta.bandera=0;
