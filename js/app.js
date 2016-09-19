@@ -81,7 +81,7 @@ app_angular.controller('sessionController',['bootbox','Conexion','$scope','$loca
                 $http({
                   method: 'GET',
                   url: 'http://demos.pedidosonline.co/Mobile/syncV2?usuario='+$scope.usuario+'&entidad=SUBITEM&codigo_empresa=' + $scope.codigoempresa + '&datos=' + JSON.stringify(elem[i]),
-                  timeout:2000
+                  timeout:5000
                     }).then(
                     function success(data) {
                         CRUD.Updatedynamic("update t_pedidos_detalle_detalle set estado=1 where rowid="+data.data.rowid+"");
@@ -108,7 +108,7 @@ app_angular.controller('sessionController',['bootbox','Conexion','$scope','$loca
                 $http({
                   method: 'GET',
                   url: 'http://demos.pedidosonline.co/Mobile/syncV2?usuario='+$scope.usuario+'&entidad=ITEM&codigo_empresa=' + $scope.codigoempresa + '&datos=' + JSON.stringify(elem[i]),
-                  timeout:2000
+                  timeout:5000
                     }).then(
                     function success(data) { 
                         CRUD.Updatedynamic("update t_pedidos_detalle set estado=1 where rowid="+data.data.rowid+"");
@@ -161,7 +161,7 @@ app_angular.controller('sessionController',['bootbox','Conexion','$scope','$loca
                     $scope.envioPedido();      
                 }
                 
-            },9000)
+            },13000)
             
         },1000)
     }
