@@ -81,7 +81,7 @@ app_angular.controller('sessionController',['bootbox','Conexion','$scope','$loca
                 $http({
                   method: 'GET',
                   url: 'http://demos.pedidosonline.co/Mobile/syncV2?usuario='+$scope.usuario+'&entidad=SUBITEM&codigo_empresa=' + $scope.codigoempresa + '&datos=' + JSON.stringify(elem[i]),
-                  timeout:50000
+                  timeout:30000
                     }).then(
                     function success(data) {
                         CRUD.Updatedynamic("update t_pedidos_detalle_detalle set estado=1 where rowid="+data.data.rowid+"");
@@ -108,7 +108,7 @@ app_angular.controller('sessionController',['bootbox','Conexion','$scope','$loca
                 $http({
                   method: 'GET',
                   url: 'http://demos.pedidosonline.co/Mobile/syncV2?usuario='+$scope.usuario+'&entidad=ITEM&codigo_empresa=' + $scope.codigoempresa + '&datos=' + JSON.stringify(elem[i]),
-                  timeout:50000
+                  timeout:30000
                     }).then(
                     function success(data) { 
                         CRUD.Updatedynamic("update t_pedidos_detalle set estado=1 where rowid="+data.data.rowid+"");
@@ -157,21 +157,17 @@ app_angular.controller('sessionController',['bootbox','Conexion','$scope','$loca
             
             CRUD.selectAllinOne("select*from t_pedidos where estado_sincronizacion=0",function(elem)
             {
-                debugger
                 if (elem.length>0) {
                     $scope.envioSubItem();
                     $scope.envioItem();
                     window.setTimeout(function(){
                         if ($scope.errorAlerta.bandera!=1) {
-                              $scope.envioPedido();          
-                            
+                              $scope.envioPedido();             
                         }
-                        
-                    },50000)      
+                    },30000)      
                 }
                 else
                 {
-                    debugger
                 }
                 
             })
@@ -1217,7 +1213,7 @@ app_angular.controller('sessionController',['bootbox','Conexion','$scope','$loca
             },10000)
             
             
-        },18000)
+        },41000)
         //Traer Nuevos Datos
     }
 
