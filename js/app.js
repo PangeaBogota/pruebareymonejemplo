@@ -88,7 +88,7 @@ app_angular.controller('sessionController',['bootbox','Conexion','$scope','$loca
                     }, 
                     function error(err) {
                         if ($scope.errorAlerta.bandera!=0) {
-                            Mensajes('Error al Subir SubItem','error','');    
+                            Mensajes('Sincronizacion Incompleta','error','');    
                         }
                         $scope.errorAlerta.bandera=1;return 
                 });
@@ -115,7 +115,7 @@ app_angular.controller('sessionController',['bootbox','Conexion','$scope','$loca
                     }, 
                     function error(err) {
                         if ($scope.errorAlerta.bandera!=1) {
-                            Mensajes('Error al Subir Item','error','');
+                            Mensajes('Sincronizacion Incompleta','error','');
                         }
                         $scope.errorAlerta.bandera=1;return 
                 });
@@ -140,7 +140,7 @@ app_angular.controller('sessionController',['bootbox','Conexion','$scope','$loca
                     function success(data) { 
                         CRUD.Updatedynamic("update t_pedidos set estado_sincronizacion=1,sincronizado='true' where rowid="+data.data.rowid+"");
                     }, 
-                    function error(err) {Mensajes('Error al Subir Pedido','error','');$scope.errorAlerta.bandera=1;return 
+                    function error(err) {Mensajes('Sincronizacion Incompleta','error','');$scope.errorAlerta.bandera=1;return 
                 });
             }
         })
