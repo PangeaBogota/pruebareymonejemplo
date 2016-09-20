@@ -445,7 +445,7 @@ app_angular.controller('sessionController',['bootbox','Conexion','$scope','$loca
         ProcesadoShow();   
         window.setTimeout(function() {
             $scope.envioPlano();    
-        },20000);
+        },16000);
         
         window.setTimeout(function(){
             if ($scope.errorAlerta.bandera==1) {
