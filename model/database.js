@@ -297,7 +297,28 @@ app_angular.service('Factory', function ($webSql) {
         "ultimo_registro": {
             "type": "INTEGER",
             "null": "NULL"
+        },
+        "estadoItem": {
+            "type": "INTEGER",
+            "null": "NULL"
+        },
+        "estadoSubItem": {
+            "type": "INTEGER",
+            "null": "NULL"
+        },
+        "d_precios_unitario": {
+            "type": "INTEGER",
+            "null": "NULL"
+        },
+        "d_valor_descuento": {
+            "type": "INTEGER",
+            "null": "NULL"
+        },
+        "lineas_plano": {
+            "type": "INTEGER",
+            "null": "NULL"
         }
+
 
     })
 

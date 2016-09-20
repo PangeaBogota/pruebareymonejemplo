@@ -68,6 +68,56 @@ app_angular.controller('sessionController',['bootbox','Conexion','$scope','$loca
         $('#openConfirmacion').click();
         
     }
+
+    $scope.envioInformacion=function(){
+        debugger
+        $scope.usuario=$scope.sessiondate.nombre_usuario;
+        $scope.codigoempresa=$scope.sessiondate.codigo_empresa;
+        $scope.informacion=[];
+        CRUD.selectAllinOne("select*from t_pedidos_detalle_detalle where estado=0",function(subitem){
+            
+            if (subitem.length>0) {
+                $scope.informacion.subitem=subitem;
+                CRUD.selectAllinOne("select*from t_pedidos_detalle where estado=0",function(item){
+            
+                    if (item.length>0) {
+                        $scope.informacion.item=item;
+                        CRUD.selectAllinOne("select*from t_pedidos where estado_sincronizacion=0",function(pedido){
+            
+                            if (pedido.length>0) {
+                                $scope.informacion.pedido=pedido;
+                                var pedidosJSON=JSON.stringify($scope.informacion.pedido);
+                                var itemJSON=JSON.stringify($scope.informacion.item);
+                                var subItemJSON=JSON.stringify($scope.informacion.subitem);
+                                debugger
+                                $http({
+                                  method: 'post',
+                                  url: 'http://localhost:45091/Mobile/SyncInfoMobile',
+                                  data:{usuario:$scope.usuario,entidad:'DATA',codigo_empresa:$scope.codigo_empresa,subitem:subItemJSON,item:itemJSON,pedidos:pedidosJSON} 
+                                    }).then(
+                                    function success(data) {
+                                        
+                                    }, 
+                                    function error(err) {
+                                        if ($scope.errorAlerta.bandera!=0) {
+                                            Mensajes('Sincronizacion Incompleta','error','');    
+                                        }
+                                        $scope.errorAlerta.bandera=1;return 
+                                });    
+                            }
+                            
+                        })
+                    }
+                })
+            }
+        })
+    }
+    //$scope.envioInformacion();
+
+
+
+
+
     $scope.envioSubItem=function(){
         $scope.usuario=$scope.sessiondate.nombre_usuario;
         $scope.codigoempresa=$scope.sessiondate.codigo_empresa;
@@ -78,10 +128,11 @@ app_angular.controller('sessionController',['bootbox','Conexion','$scope','$loca
                     $scope.errorAlerta.bandera=1;
                     break;
                 }
+
                 $http({
                   method: 'GET',
                   url: 'http://demos.pedidosonline.co/Mobile/syncV2?usuario='+$scope.usuario+'&entidad=SUBITEM&codigo_empresa=' + $scope.codigoempresa + '&datos=' + JSON.stringify(elem[i]),
-                  timeout:30000
+                  timeout:2000
                     }).then(
                     function success(data) {
                         CRUD.Updatedynamic("update t_pedidos_detalle_detalle set estado=1 where rowid="+data.data.rowid+"");
@@ -98,6 +149,7 @@ app_angular.controller('sessionController',['bootbox','Conexion','$scope','$loca
     $scope.envioItem=function(){
         $scope.usuario=$scope.sessiondate.nombre_usuario;
         $scope.codigoempresa=$scope.sessiondate.codigo_empresa;
+        
         CRUD.selectAllinOne("select*from t_pedidos_detalle where estado=0",function(elem){
             for (var i =0;i<elem.length;i++) {
                 var rowid=elem[i].rowid
@@ -108,7 +160,7 @@ app_angular.controller('sessionController',['bootbox','Conexion','$scope','$loca
                 $http({
                   method: 'GET',
                   url: 'http://demos.pedidosonline.co/Mobile/syncV2?usuario='+$scope.usuario+'&entidad=ITEM&codigo_empresa=' + $scope.codigoempresa + '&datos=' + JSON.stringify(elem[i]),
-                  timeout:30000
+                  timeout:2000
                     }).then(
                     function success(data) { 
                         CRUD.Updatedynamic("update t_pedidos_detalle set estado=1 where rowid="+data.data.rowid+"");
@@ -155,22 +207,13 @@ app_angular.controller('sessionController',['bootbox','Conexion','$scope','$loca
         $scope.errorAlerta.bandera=0;
         window.setTimeout(function(){
             
-            CRUD.selectAllinOne("select*from t_pedidos where estado_sincronizacion=0",function(elem)
-            {
-                if (elem.length>0) {
-                    $scope.envioSubItem();
-                    $scope.envioItem();
-                    window.setTimeout(function(){
-                        if ($scope.errorAlerta.bandera!=1) {
-                              $scope.envioPedido();             
-                        }
-                    },30000)      
+            $scope.envioSubItem();
+            $scope.envioItem();
+            window.setTimeout(function(){
+                if ($scope.errorAlerta.bandera!=1) {
+                      $scope.envioPedido();             
                 }
-                else
-                {
-                }
-                
-            })
+            },7000)    
 
             
         },1000)
@@ -230,6 +273,31 @@ app_angular.controller('sessionController',['bootbox','Conexion','$scope','$loca
     }
     
 
+    $scope.envioPlano=function(){
+        debugger
+        $scope.usuario=$scope.sessiondate.nombre_usuario;
+        $scope.codigoempresa=$scope.sessiondate.codigo_empresa;
+        
+        CRUD.selectAllinOne("select*from s_planos_pedidos where estado=0 order by ultimo_registro asc",function(elem){
+            for (var i =0;i<elem.length;i++) {
+                var rowid=elem[i].rowid
+                if ($scope.status.connextionstate==false) {
+                    $scope.errorAlerta.bandera=1;
+                    break;
+                }
+                $http({
+                  method: 'GET',
+                  url: 'http://demos.pedidosonline.co/Mobile/sync?usuario='+$scope.usuario+'&entidad=PLANO&codigo_empresa=' + $scope.codigoempresa + '&datos=' + JSON.stringify(elem[i])
+                    }).then(
+                    function success(data) { 
+                        CRUD.Updatedynamic("update s_planos_pedidos set estado=1 where rowid="+data.data.rowid+"");
+                    }, 
+                    function error(err) {
+                        $scope.errorAlerta.bandera=1;return 
+                });
+            }
+        })
+    }
     $scope.build=function(){
         $scope.queryBuild='    select  '+
            ' t.key_user,'+
@@ -272,6 +340,8 @@ app_angular.controller('sessionController',['bootbox','Conexion','$scope','$loca
             'tpd.empaque as d_empaque,'+
             'tpd.observaciones as d_observaciones,'+
             'tpd.rowid_bodega as d_rowid_bodega,'+
+            'tpd.precio_unitario as d_precio_unitario,'+
+            'tpd.valor_descuento as d_valor_descuento,'+
             'tpdd.rowid as s_rowid,'+
             'tpdd.pedidodetalle as s_rowid_detalle,'+
             'tpdd.cantidad as s_cantidad,'+
@@ -352,8 +422,7 @@ app_angular.controller('sessionController',['bootbox','Conexion','$scope','$loca
                     "','"+ped[i].s_rowid_detalle+
                     "','"+ped[i].s_cantidad+
                     "','"+ped[i].s_itemextencion2detalle+
-                    "',0,"+step+" "; 
-                    console.log(stringSentencia)
+                    "',0,"+step+",0,0,'"+ped[i].d_precio_unitario+"','"+ped[i].d_valor_descuento+"','"+ped.length+"' "; 
                     if (contador==499) {
                         CRUD.Updatedynamic(stringSentencia)
                         NewQuery=true;
@@ -365,24 +434,20 @@ app_angular.controller('sessionController',['bootbox','Conexion','$scope','$loca
                     CRUD.Updatedynamic(stringSentencia)
                     NewQuery=true;
                 }
-                CRUD.Updatedynamic("update t_pedidos set estado_sincronizacion=1 where rowid="+rowidPedido+"");
+                CRUD.Updatedynamic("update t_pedidos set estado_sincronizacion=1,sincronizado='true' where rowid="+rowidPedido+"");
             })
         }) 
-        
-
-
-
     }
-    //CRUD.Updatedynamic("delete from  s_planos_pedidos");
-    //CRUD.Updatedynamic("update t_pedidos set estado_sincronizacion=1 where rowid="+9733+"");
     //$scope.build();
     $scope.sincronizar=function(){
-        ProcesadoShow();
-        $scope.datosSubir();    
+        $scope.build();
+        //run($scope.build()).then($scope.envioPlano());
+        ProcesadoShow();   
+        window.setTimeout(function() {
+            $scope.envioPlano();    
+        },20000);
+        
         window.setTimeout(function(){
-            //VACIAR TABLAS
-             //ProcesadoHiden();
-            //return
             if ($scope.errorAlerta.bandera==1) {
                 Mensajes('Error al Sincronizar, Por favor revise que su conexion sea estable','error','');
                 ProcesadoHiden();
@@ -394,8 +459,6 @@ app_angular.controller('sessionController',['bootbox','Conexion','$scope','$loca
                 Mensajes('Informacion Procesada','success','');
             }
             CRUD.Updatedynamic("delete from crm_actividades");
-            //CRUD.Updatedynamic("delete from t_pedidos");
-            //CRUD.Updatedynamic("delete from t_pedidos_detalle");
             CRUD.Updatedynamic("delete from erp_items");
             CRUD.Updatedynamic("delete from erp_entidades_master");
             CRUD.Updatedynamic("delete from erp_items_precios");
@@ -411,7 +474,6 @@ app_angular.controller('sessionController',['bootbox','Conexion','$scope','$loca
             CRUD.Updatedynamic("delete from erp_item_extencion1_detalle");
             CRUD.Updatedynamic("delete from erp_item_extencion2_detalle");
             CRUD.Updatedynamic("delete from erp_items_extenciones");
-            //CRUD.Updatedynamic("delete from t_pedidos_detalle_detalle");
             
             //
             Sincronizar($scope.sessiondate.nombre_usuario,$scope.sessiondate.codigo_empresa);
@@ -1210,10 +1272,10 @@ app_angular.controller('sessionController',['bootbox','Conexion','$scope','$loca
                 ProcesadoHiden();
                 $route.reload();
                 Mensajes('Sincronizado Con Exito','success','')
-            },10000)
+            },7000)
             
             
-        },41000)
+        },32000)
         //Traer Nuevos Datos
     }
 
