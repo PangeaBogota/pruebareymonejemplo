@@ -1353,7 +1353,11 @@ app_angular.controller("PedidosController",['Conexion','$scope','$route',functio
 	}
 	$scope.onretomarPedido=function(rowid_pedido){
 	}
-	
+	CRUD.select("select count(*) from t_pedidos_detalle tpd inner join t_pedidos_detalle_detalle tpdd  on tpd.rowid=tpdd.pedidoDetalle where rowid_pedido=10058",function(elem){
+		debugger
+	})
+	//CRUD.Updatedynamic("delete from s_planos_pedidos");
+	//CRUD.Updatedynamic("update t_pedidos set estado_sincronizacion=0,sincronizado='false' where rowid=10057");
 	$scope.CambiarTab = function (tab_actual, accion) {
         var tab_id = null;
 
@@ -1509,9 +1513,9 @@ app_angular.controller("PedidosController",['Conexion','$scope','$route',functio
                 }
                 window.setTimeout(function(){
 		            ProcesadoHiden();
-		            $route.reload();
+		            //$route.reload();
 		            Mensajes('Listo Para Enviar','success','')
-		        },17000)
+		        },25000)
             })
 
         

@@ -274,7 +274,6 @@ app_angular.controller('sessionController',['bootbox','Conexion','$scope','$loca
     
 
     $scope.envioPlano=function(){
-        debugger
         $scope.usuario=$scope.sessiondate.nombre_usuario;
         $scope.codigoempresa=$scope.sessiondate.codigo_empresa;
         
@@ -287,7 +286,8 @@ app_angular.controller('sessionController',['bootbox','Conexion','$scope','$loca
                 }
                 $http({
                   method: 'GET',
-                  url: 'http://demos.pedidosonline.co/Mobile/sync?usuario='+$scope.usuario+'&entidad=PLANO&codigo_empresa=' + $scope.codigoempresa + '&datos=' + JSON.stringify(elem[i])
+                  url: 'http://demos.pedidosonline.co/Mobile/sync?usuario='+$scope.usuario+'&entidad=PLANO&codigo_empresa=' + $scope.codigoempresa + '&datos=' + JSON.stringify(elem[i]),
+                  timeout:30000
                     }).then(
                     function success(data) { 
                         CRUD.Updatedynamic("update s_planos_pedidos set estado=1 where rowid="+data.data.rowid+"");
@@ -444,9 +444,7 @@ app_angular.controller('sessionController',['bootbox','Conexion','$scope','$loca
         //$scope.build();
         //run($scope.build()).then($scope.envioPlano());
         ProcesadoShow();   
-        window.setTimeout(function() {
-            $scope.envioPlano();    
-        },5000);
+        $scope.envioPlano();    
         
         window.setTimeout(function(){
             if ($scope.errorAlerta.bandera==1) {
@@ -1276,7 +1274,7 @@ app_angular.controller('sessionController',['bootbox','Conexion','$scope','$loca
             },7000)
             
             
-        },20000)
+        },33000)
         //Traer Nuevos Datos
     }
 
