@@ -440,6 +440,7 @@ app_angular.controller('sessionController',['bootbox','Conexion','$scope','$loca
     }
     //$scope.build();
     $scope.sincronizar=function(){
+        $scope.errorAlerta.bandera=0;
         $scope.build();
         //run($scope.build()).then($scope.envioPlano());
         ProcesadoShow();   
