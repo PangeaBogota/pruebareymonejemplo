@@ -441,12 +441,12 @@ app_angular.controller('sessionController',['bootbox','Conexion','$scope','$loca
     //$scope.build();
     $scope.sincronizar=function(){
         $scope.errorAlerta.bandera=0;
-        $scope.build();
+        //$scope.build();
         //run($scope.build()).then($scope.envioPlano());
         ProcesadoShow();   
         window.setTimeout(function() {
             $scope.envioPlano();    
-        },16000);
+        },5000);
         
         window.setTimeout(function(){
             if ($scope.errorAlerta.bandera==1) {
@@ -1276,7 +1276,7 @@ app_angular.controller('sessionController',['bootbox','Conexion','$scope','$loca
             },7000)
             
             
-        },32000)
+        },20000)
         //Traer Nuevos Datos
     }
 
