@@ -816,15 +816,17 @@ app_angular.controller("pedidoController",['Conexion','$scope','$location','$htt
 			$('#btnGuardar').removeAttr('disabled');
 			return
 		}
+		ProcesadoShow();
 		$scope.guardarCabezera(destino);
 		window.setTimeout(function(){
 			$scope.guardarDetalle(destino);
-		},2000)
+		},1700)
 		Mensajes('Pedido Guardado Correctamente','success','');
 		window.setTimeout(function(){
+			ProcesadoHiden();
 			$scope.confimar.salir=true
 			window.location.href = '#/ventas/pedidos_ingresados';
-		},2200)
+		},9000)
 		
 	}
 	$scope.onChangeFiltroTercero=function(){
@@ -1014,9 +1016,6 @@ app_angular.controller("pedidoController",['Conexion','$scope','$location','$htt
 		$scope.Variables=[];
 		$scope.Variables.descripcion=item.observaciones;
 		$scope.onChangeComboItem();
-		//console.log(index)
-    	//$scope.itemsAgregadosPedido.splice(index, 1);
-    	//$scope.CalcularCantidadValorTotal();
     	$scope.actualizarPrecio();
 
     	$scope.CambiarTab('3','atras');
@@ -1082,19 +1081,39 @@ app_angular.controller("pedidoController",['Conexion','$scope','$location','$htt
 				$scope.detalle.fechacreacion=$scope.CurrentDate();
 				CRUD.insert($scope.tablaMovimientoDestino,$scope.detalle);
 				CRUD.select("select max(rowid) as rowid from t_pedidos_detalle",function(Detalle){
+					var NewQuery=true
+					var stringSentencia="";
+					var contador=0;
 					for (var i = 0;i<detalle.detalle2.length;i++) {
-					if (detalle.detalle2[i].cantidad>0) {
-						$scope.extensionInsert=[];
-						$scope.extensionInsert.cantidad=detalle.detalle2[i].cantidad;
-						$scope.extensionInsert.estado=0;
-						$scope.extensionInsert.indicador=$scope.sessiondate.key;
-						$scope.extensionInsert.pedidoDetalle=parseInt(Detalle.rowid)
-						$scope.extensionInsert.itemExtension2Detalle=detalle.detalle2[i].extencionDetalle2ID
-						$scope.extensionInsert.usuariocreacion=$scope.sessiondate.nombre_usuario;
-						CRUD.insert("t_pedidos_detalle_detalle",$scope.extensionInsert);
+						contador++;
+						if (detalle.detalle2[i].cantidad>0) {
+							if (NewQuery) {
+	                        stringSentencia=" insert into t_pedidos_detalle_detalle  ";
+		                        NewQuery=false;
+		                    }
+		                    else{
+		                        stringSentencia+= "   UNION   ";
+		                    }
+		                    stringSentencia+=  "  SELECT  "+
+		                    //ped[i].e_rowid+
+							"null,'"+parseInt(Detalle.rowid)+
+		                    "','"+detalle.detalle2[i].extencionDetalle2ID+"','"+detalle.detalle2[i].cantidad+"',0,0,0,0,0,0 "; 
+						}
+						if (contador==499) {
+							CRUD.Updatedynamic(stringSentencia)
+		                    NewQuery=true;
+	                        stringSentencia="";
+	                        contador=0;
+						}
+						
+					}	
+					if (stringSentencia!="") {
+						CRUD.Updatedynamic(stringSentencia)
+	                    NewQuery=true;
+                        stringSentencia="";
+                        contador=0;
 					}
-					
-				}	
+
 				})
 				
 			})
@@ -1130,7 +1149,6 @@ app_angular.controller("pedidoController",['Conexion','$scope','$location','$htt
 		}else{
 			$scope.tablaDestino='t_pedidos';
 		}
-		debugger
 		//$scope.pedido_detalle.rowid_pedido=$scope.pedidos.rowid;
 		$scope.pedidos.modulo_creacion='MOBILE';
 		$scope.pedidos.valor_total=$scope.pedidoDetalles.total;
@@ -1353,9 +1371,6 @@ app_angular.controller("PedidosController",['Conexion','$scope','$route',functio
 	}
 	$scope.onretomarPedido=function(rowid_pedido){
 	}
-	CRUD.select("select count(*) from t_pedidos_detalle tpd inner join t_pedidos_detalle_detalle tpdd  on tpd.rowid=tpdd.pedidoDetalle where rowid_pedido=10058",function(elem){
-		debugger
-	})
 	//CRUD.Updatedynamic("delete from s_planos_pedidos");
 	//CRUD.Updatedynamic("update t_pedidos set estado_sincronizacion=0,sincronizado='false' where rowid=10057");
 	$scope.CambiarTab = function (tab_actual, accion) {
@@ -1372,7 +1387,12 @@ app_angular.controller("PedidosController",['Conexion','$scope','$route',functio
     };
     angular.element('#ui-id-1').mouseover(function (){
         angular.element('#ui-id-1').show();
+    
     });
+    //CRUD.selectAllinOne("select sum(tpd.cantidad) from t_pedidos p left join t_pedidos_detalle tpd on p.rowid=tpd.rowid_pedido  where p.rowid=10068",function(elem){debugger})
+    CRUD.selectAllinOne("select sum(tpdd.cantidad) from t_pedidos p left join t_pedidos_detalle tpd on p.rowid=tpd.rowid_pedido left join t_pedidos_detalle_detalle tpdd on tpd.rowid=tpdd.pedidoDetalle where p.rowid=10069",function(elem){debugger})
+    //CRUD.select("select sum(d_cantidad) from s_planos_pedidos where e_rowid=10068",function(elem){debugger})
+    //CRUD.select("select count(*) from t_pedidos_detalle where rowid_pedido=10068",function(elem){debugger})
     $scope.build=function(rowid){
     	$('.confirmarEnvio').attr('disabled','disabled');
     	ProcesadoShow();   
@@ -1429,8 +1449,11 @@ app_angular.controller("PedidosController",['Conexion','$scope','$route',functio
             ' inner  join t_pedidos_detalle_detalle tpdd '+
             ' on tpdd.pedidodetalle=tpd.rowid   where  t.rowid= __REQUIRED  and estado_sincronizacion=0 '+
             ' order by t.rowid asc';
+
+            
         $scope.queryBuild=$scope.queryBuild.replace('__REQUIRED',$scope.pedidoSeleccionado.rowid_pedido)
         CRUD.selectAllinOne($scope.queryBuild,function(ped){
+        		debugger
                 var rowidPedido=0;
                 var contador=0;
                 var  stringSentencia='';
@@ -1438,6 +1461,7 @@ app_angular.controller("PedidosController",['Conexion','$scope','$route',functio
                 var ultimoregistro=ped.length-1;
                 var step=0;
                 for (var i =0;i<ped.length;i++) {
+                	contador++
                     if (ultimoregistro==i) {
                         step=1
                     }
