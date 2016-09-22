@@ -821,12 +821,14 @@ app_angular.controller("pedidoController",['Conexion','$scope','$location','$htt
 		window.setTimeout(function(){
 			$scope.guardarDetalle(destino);
 		},1700)
-		Mensajes('Pedido Guardado Correctamente','success','');
+		
 		window.setTimeout(function(){
-			ProcesadoHiden();
+			
+			Mensajes('Pedido Guardado Correctamente','success','');
 			$scope.confimar.salir=true
+			ProcesadoHiden();
 			window.location.href = '#/ventas/pedidos_ingresados';
-		},9000)
+		},14000)
 		
 	}
 	$scope.onChangeFiltroTercero=function(){
@@ -1390,7 +1392,7 @@ app_angular.controller("PedidosController",['Conexion','$scope','$route',functio
     
     });
     //CRUD.selectAllinOne("select sum(tpd.cantidad) from t_pedidos p left join t_pedidos_detalle tpd on p.rowid=tpd.rowid_pedido  where p.rowid=10068",function(elem){debugger})
-    CRUD.selectAllinOne("select sum(tpdd.cantidad) from t_pedidos p left join t_pedidos_detalle tpd on p.rowid=tpd.rowid_pedido left join t_pedidos_detalle_detalle tpdd on tpd.rowid=tpdd.pedidoDetalle where p.rowid=10069",function(elem){debugger})
+    //CRUD.selectAllinOne("select sum(tpdd.cantidad) from t_pedidos p left join t_pedidos_detalle tpd on p.rowid=tpd.rowid_pedido left join t_pedidos_detalle_detalle tpdd on tpd.rowid=tpdd.pedidoDetalle where p.rowid=10069",function(elem){debugger})
     //CRUD.select("select sum(d_cantidad) from s_planos_pedidos where e_rowid=10068",function(elem){debugger})
     //CRUD.select("select count(*) from t_pedidos_detalle where rowid_pedido=10068",function(elem){debugger})
     $scope.build=function(rowid){
@@ -1450,7 +1452,7 @@ app_angular.controller("PedidosController",['Conexion','$scope','$route',functio
             ' on tpdd.pedidodetalle=tpd.rowid   where  t.rowid= __REQUIRED  and estado_sincronizacion=0 '+
             ' order by t.rowid asc';
 
-            
+
         $scope.queryBuild=$scope.queryBuild.replace('__REQUIRED',$scope.pedidoSeleccionado.rowid_pedido)
         CRUD.selectAllinOne($scope.queryBuild,function(ped){
         		debugger
