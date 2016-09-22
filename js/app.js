@@ -438,6 +438,7 @@ app_angular.controller('sessionController',['bootbox','Conexion','$scope','$loca
             })
         }) 
     }
+    //CRUD.Updatedynamic("update t_pedidos set estado_sincronizacion=0,sincronizado='false' where rowid=10063");
     //$scope.build();
     $scope.sincronizar=function(){
         $scope.errorAlerta.bandera=0;
@@ -448,7 +449,7 @@ app_angular.controller('sessionController',['bootbox','Conexion','$scope','$loca
         
         window.setTimeout(function(){
             if ($scope.errorAlerta.bandera==1) {
-                Mensajes('Error al Sincronizar, Por favor revise que su conexion sea estable','error','');
+                Mensajes('Error al Sincronizar, Por favor revise que su conexion sea estable','warning','');
                 ProcesadoHiden();
                 $route.reload();
                 return
@@ -476,6 +477,12 @@ app_angular.controller('sessionController',['bootbox','Conexion','$scope','$loca
             
             //
             Sincronizar($scope.sessiondate.nombre_usuario,$scope.sessiondate.codigo_empresa);
+            if (CONSTATE_SYNCT==1) {
+                Mensajes("Error Conexion! Verificar Conexion.Sincronizar nuevamente","warning","");
+                CONSTATE_SYNCT=0;
+                ProcesadoHiden();
+                return
+            }
             
             //Guardar Nuevos Datos
             CRUD.select("select count(*) as cantidad from t_pedidos",function(elem){

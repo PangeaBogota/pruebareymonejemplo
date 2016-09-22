@@ -167,6 +167,10 @@
                         ProcesadoHiden();
                         Mensajes(data.message,'error','');
                     }
+                },
+                error:function(err){
+                    ProcesadoHiden();
+                    Mensajes("Verificar Conexion",'error','');
                 }/*,
                 error: function (request,a,b) {
                     ProcesadoHiden();

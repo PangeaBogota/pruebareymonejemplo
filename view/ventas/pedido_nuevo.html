@@ -313,7 +313,7 @@
                                 </span>
                             </button>
                         </span>
-                        <input type="number" class="form-control " ng-model="tallas.cantidad"  ng-change="onChangeCantidad(tallas.talla,tallas.stock)"   style="min-width:50px" min="0" />
+                        <input type="number" class="form-control " ng-model="tallas.cantidad"  ng-change="onChangeCantidad(tallas.talla,tallas.stock)"  step="any"  style="min-width:50px" min="0" />
                         <span class="input-group-btn" ng-click="cantidadTalla(tallas.talla,'suma',tallas.stock)">
                             <button type="button" class="btn btn-default">
                                 <span class="glyphicon glyphicon-plus">
@@ -494,8 +494,8 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                    <button type="button" class="btn btn-danger antoclose" ng-click="onConfirmarSalida('salir')" data-dismiss="modal">Salir</button>
-                    <button type="button" class="btn btn-success antoclose" ng-click="onConfirmarSalida('guardar')" data-dismiss="modal">Si</button>
+                    <button type="button" class="btn btn-danger antoclose" ng-click="onConfirmarSalida('salir')" data-dismiss="modal" style="margin:0px">Salir</button>
+                    <button type="button" class="btn btn-success antoclose" ng-click="onConfirmarSalida('guardar')" data-dismiss="modal" >Si</button>
                     <button type="button" class="btn btn-primary antoclose" ng-click="onConfirmarSalida('permanecer')" data-dismiss="modal">Permanecer</button>
                     </div>
                 </div>
@@ -574,7 +574,7 @@
                                                         </span>
                                                     </button>
                                                 </span>
-                                                <input type="number" ng-model="extension.cantidad" ng-change="onChangeCantidadDetalle2(extension.extencionDetalle2ID,extension.stock,extension.cantidadextension1)" class="form-control text-center" ng-readonly="readonly" min="0" />
+                                                <input type="number" step="any" ng-model="extension.cantidad" ng-change="onChangeCantidadDetalle2(extension.extencionDetalle2ID,extension.stock,extension.cantidadextension1)" class="form-control text-center" ng-readonly="readonly" min="0" />
                                                 <span class="input-group-btn"  ng-click="adicionarCantidadDetalle2(extension.extencionDetalle2ID,'sumar',extension.stock,extension.cantidadextension1)">
                                                     <button type="button" class="btn btn-default">
                                                         <span class="glyphicon glyphicon-plus">
@@ -590,8 +590,8 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                    <button type="button" class="btn btn-danger antoclose"  data-dismiss="modal">Salir</button>
-                    <button type="button" class="btn btn-success antoclose" ng-click="agregarColoresTalla()"  data-dismiss="modal">Confirmar</button>
+                    <button type="button" class="btn btn-danger antoclose" style="margin:0px"  data-dismiss="modal">Salir</button>
+                    <button type="button" class="btn btn-success antoclose"  ng-click="agregarColoresTalla()"  data-dismiss="modal">Confirmar</button>
                     </div>
                 </div>
             </div>

@@ -144,6 +144,13 @@
     <!-- Controladores JS -->
     <script type="text/javascript" src="controller/erp_tercerosController.js"></script>
     <script type="text/javascript" src="controller/crm_actividades.js"></script>
+    <style type="text/css">
+        input[type=number]::-webkit-outer-spin-button,
+        input[type=number]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+    </style>
     <script type="text/javascript" src="controller/ventasController.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
@@ -228,11 +235,16 @@
                 contentType: "application/json; charset=utf-8",
                 type: 'get',
                 url: 'http://demos.pedidosonline.co/Mobile/Instalacion?step=2&username='+username+'&codigo_empresa=' + codigo_empresa+ '&entidad=' + STEP_SINCRONIZACION[i],
+                timeout:50000,
                 crossDomain: true,
                 async: false,
                 success: function (data) {
                         DATOS_ENTIDADES_SINCRONIZACION[i]=STEP_SINCRONIZACION[i].toString();
                         DATOS_ENTIDADES_SINCRONIZACION[i] = data;
+                },
+                error:function(err){
+                    CONSTATE_SYNCT=1
+                    //Mensajes("Error Conexion! Verificar Conexion.Sincronizar nuevamente","error","");
                 }
                 });
             }
