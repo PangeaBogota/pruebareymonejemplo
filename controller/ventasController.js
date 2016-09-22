@@ -828,6 +828,7 @@ app_angular.controller("pedidoController",['Conexion','$scope','$location','$htt
 			$scope.confimar.salir=true
 			ProcesadoHiden();
 			window.location.href = '#/ventas/pedidos_ingresados';
+			
 		},14000)
 		
 	}
