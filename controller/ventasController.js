@@ -828,7 +828,7 @@ app_angular.controller("pedidoController",['Conexion','$scope','$location','$htt
 			$scope.confimar.salir=true
 			ProcesadoHiden();
 			window.location.href = '#/ventas/pedidos_ingresados';
-			
+
 		},14000)
 		
 	}
@@ -1456,7 +1456,6 @@ app_angular.controller("PedidosController",['Conexion','$scope','$route',functio
 
         $scope.queryBuild=$scope.queryBuild.replace('__REQUIRED',$scope.pedidoSeleccionado.rowid_pedido)
         CRUD.selectAllinOne($scope.queryBuild,function(ped){
-        		debugger
                 var rowidPedido=0;
                 var contador=0;
                 var  stringSentencia='';
@@ -1536,12 +1535,17 @@ app_angular.controller("PedidosController",['Conexion','$scope','$route',functio
                 if (stringSentencia!='') {
                     CRUD.Updatedynamic(stringSentencia)
                     NewQuery=true;
-                    CRUD.Updatedynamic("update t_pedidos set estado_sincronizacion=1,sincronizado='true' where rowid="+rowidPedido+"");
+                    CRUD.Updatedynamic("update t_pedidos set estado_sincronizacion=1,sincronizado='plano' where rowid="+rowidPedido+"");
                 }
                 window.setTimeout(function(){
 		            ProcesadoHiden();
 		            //$route.reload();
-		            Mensajes('Listo Para Enviar','success','')
+		            Mensajes('Listo Para Enviar','success','');
+		            $scope.pedidos=[];
+		            CRUD.select('select distinct pedidos.sincronizado,pedidos.valor_impuesto,pedidos.fecha_solicitud,pedidos.sincronizado, pedidos.rowid as rowidpedido,terceros.razonsocial,sucursal.nombre_sucursal,punto_envio.nombre_punto_envio,pedidos.valor_total,detalle.rowid_pedido,count(detalle.rowid_pedido) cantidaddetalles,sum(detalle.cantidad) as cantidadproductos,pedidos.numpedido_erp from  t_pedidos pedidos inner join erp_terceros_sucursales sucursal on sucursal.rowid=pedidos.rowid_cliente_facturacion  inner join erp_terceros terceros on terceros.rowid=sucursal.rowid_tercero  left  join t_pedidos_detalle detalle on detalle.rowid_pedido=pedidos.rowid left join erp_terceros_punto_envio punto_envio on punto_envio.rowid=pedidos.id_punto_envio group by  pedidos.fecha_solicitud,detalle.rowid_pedido,pedidos.rowid,terceros.razonsocial,sucursal.nombre_sucursal,punto_envio.nombre_punto_envio,pedidos.valor_total order by pedidos.rowid desc    LIMIT 50',
+    				function(elem) {$scope.pedidos.push(elem)});
+    				$(".confirmarEnvio").removeAttr("disabled");
+    				$('#modalClose').click();
 		        },25000)
             })
 
